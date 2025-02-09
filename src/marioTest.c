@@ -15,7 +15,6 @@
 #include "marioTest.h"
 #include "game/mario_actions_cutscene.h"
 
-int hasPerformedGroundPoundJump = 0; // Global variable to track the jump
 
 s32 act_ground_pound(struct MarioState *m) {
     u32 stepResult;
