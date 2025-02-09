@@ -11,6 +11,11 @@
 .importobj "obj/marioTest.o"
 .endarea
 
+.org 0x8026b6a0
+.area 0x8026b740-0x8026b6a0
+.importobj "obj/marioGPJ.o"
+.endarea
+
 // .org 0x802c76d4
 // .area 0x80281188-0x802c76d4
 // .importobj "obj/mariot2.o"
