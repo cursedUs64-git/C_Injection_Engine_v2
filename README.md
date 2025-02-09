@@ -29,5 +29,5 @@ include/sm64
   /libc/ .......... Maths Equation Defines
 asm/.............. Generated Object Files
 
-link.asm .......... linker tasks, bootstrap code, hook inserts
+inject.asm .......... linker tasks, bootstrap code, hook inserts
 ```
