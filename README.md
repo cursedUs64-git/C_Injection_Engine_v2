@@ -4,7 +4,7 @@ Super Mario 64 C Injection Tool by RealGrude and CalebV64.
 
 # Dependencies
 
-### The following tools are required to build (for Windows atleast):
+### The following tools are required to build (for Windows at least):
 
 * n64chain
 * n64crc
