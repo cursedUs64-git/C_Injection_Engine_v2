@@ -17,8 +17,7 @@ An in-depth paragraph about your project and overview of use.
 ## Folder Format
 ```
 src/
-  hooks.c ......... entry point functions that will be called by the game
-  hello_world.c ... hello world print example
+  marioTest.c ... Example ground pound dive code.
 
 include/sm64
   /PR/ ..... Build Tools
