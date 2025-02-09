@@ -1,0 +1,31 @@
+INCLUDE symbols.ld
+
+ENTRY(bhv_loop)
+
+SECTIONS
+{
+        .text     : { *(.text*) }
+        /* NOTE: ld.lld disallows to discard .shstrtab */ 
+        .shstrtab : { *(.shstrtab*) }
+  .sm64 0x80408000 : 
+  {
+    *(.data)
+    *(.data.*)
+    *(.bss)
+    *(.bss.*)
+    *(.text)
+    *(.text.*) 
+    *(.rodata)
+    *(.rodata.*)
+  }
+  
+  /DISCARD/ :
+  {
+	*(.MIPS.abiflags)
+	*(.gnu.attributes)
+	*(.mdebug.abi32)
+	*(.comment)
+	*(.pdr)
+	*(.reginfo)
+  }
+}
