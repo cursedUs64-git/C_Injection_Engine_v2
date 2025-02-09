@@ -16,7 +16,10 @@
 #include "game/mario_actions_cutscene.h"
 
 
-s32 act_ground_pound(struct MarioState *m) {
+int hasPerformedGroundPoundJump = 0; // Global variable to track the jump
+
+
+s32 act_ground_pound_custom(struct MarioState *m) {
     u32 stepResult;
     f32 yOffset;
     

@@ -19,7 +19,6 @@
 #include "game/save_file.h"
 #include "game/spawn_sound.h"
 
-int hasPerformedGroundPoundJump = 0; // Global variable to track the jump
 
 #define o gCurrentObject
 

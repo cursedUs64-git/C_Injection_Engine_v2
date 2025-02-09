@@ -6,14 +6,20 @@
 .include "asm/adreso.asm"
 .headersize 0x80245000
 
+
+.orga 0x120000
+.importobj "obj/marioTest.o"
+.importobj "obj/marioGPJ.o"
+
+
 .org 0x8026c9fc
 .area 0x8026cd0c-0x8026c9fc
-.importobj "obj/marioTest.o"
+.importobj "obj/badCodeOne.o"
 .endarea
 
 .org 0x8026b6a0
 .area 0x8026b740-0x8026b6a0
-.importobj "obj/marioGPJ.o"
+.importobj "obj/badCodeTwo.o"
 .endarea
 
 // .org 0x802c76d4

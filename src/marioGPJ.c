@@ -15,10 +15,11 @@
 #include "marioTest.h"
 #include "game/mario_actions_cutscene.h"
 
+extern int hasPerformedGroundPoundJump;
 
 //     EDIT 09/02/25 - 19:51 GMT  Add the jump code to actually make the gpj work.
 
-s32 act_jump(struct MarioState *m) {
+s32 act_jump_custom(struct MarioState *m) {
     
     hasPerformedGroundPoundJump = 0;
 
