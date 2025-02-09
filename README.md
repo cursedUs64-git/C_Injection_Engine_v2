@@ -13,7 +13,7 @@ An in-depth paragraph about your project and overview of use.
 * n64chain
 * n64crc
 * armips
-* MYSYS2
+* MSYS2 
 
 ## Folder Format
 ```
