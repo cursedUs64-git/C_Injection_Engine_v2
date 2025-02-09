@@ -1,0 +1,7 @@
+out.txt
+main.out
+payload
+.vscode/
+obj/
+*.z64
+*.o
