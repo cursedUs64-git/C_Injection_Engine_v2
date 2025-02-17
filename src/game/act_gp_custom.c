@@ -1,6 +1,5 @@
 #include "basicheader.h"
 
-<<<<<<< HEAD:src/marioTest.c
 #include "sm64.h"
 #include "game/area.h"
 #include "game/level_update.h"
@@ -16,15 +15,9 @@
 #include "marioTest.h"
 #include "game/mario_actions_cutscene.h"
 
-
-int hasPerformedGroundPoundJump = 0; // Global variable to track the jump
-
-
-s32 act_ground_pound_custom(struct MarioState *m) {
-=======
 u8 hasPerformedGroundPoundJump = 0;
+
 s32 cahstom_act_ground_pound(struct MarioState *m) {
->>>>>>> dea4d5f (Finally fix everything):src/game/act_gp_custom.c
     u32 stepResult;
     f32 yOffset;
 
@@ -116,8 +109,3 @@ s32 cahstom_act_ground_pound(struct MarioState *m) {
 
     return FALSE;
 }
-<<<<<<< HEAD:src/marioTest.c
-
-
-=======
->>>>>>> dea4d5f (Finally fix everything):src/game/act_gp_custom.c
