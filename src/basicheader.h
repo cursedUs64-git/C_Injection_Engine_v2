@@ -1,6 +1,7 @@
 #ifndef _MARIOTEST_
 #define _MARIOTEST_
 
+#include <ultra64.h>
 #include "sm64.h"
 #include "audio/external.h"
 #include "behavior_data.h"
@@ -18,6 +19,19 @@
 #include "game/rendering_graph_node.h"
 #include "game/save_file.h"
 #include "game/spawn_sound.h"
+#include "game/mario_actions_cutscene.h"
+#include "game/camera.h"
+#include "game/area.h"
+#include "game/level_update.h"
+#include "engine/math_util.h"
+#include "game/interaction.h"
+#include "game/mario.h"
+#include "game/mario_step.h"
+#include "game/camera.h"
+#include "game/save_file.h"
+#include "audio/external.h"
+#include "engine/graph_node.h"
+#include "game/game.h"
 
 
 #define o gCurrentObject
