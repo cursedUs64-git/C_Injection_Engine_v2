@@ -1,6 +1,6 @@
 # Super Mario 64 C Injection Engine V2
 
-Super Mario 64 C Injection Tool by RealGrude and CalebV64.
+Super Mario 64 C Injection Tool by RealGrude, SuperMarioXerox13 and CalebV64.
 
 This is an example setup for injecting compiled C code into Super Mario 64.
 
