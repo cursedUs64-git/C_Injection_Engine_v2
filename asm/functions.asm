@@ -570,6 +570,7 @@
 .definelabel main_pool_available, 0x802783c8
 .definelabel main_pool_push_state, 0x802783e8
 .definelabel main_pool_pop_state, 0x80278498
+.definelabel dma_copy, 0x80278504
 .definelabel load_segment, 0x8027868c
 .definelabel load_to_fixed_pool_addr, 0x802786f0
 .definelabel load_segment_decompress, 0x802787d8

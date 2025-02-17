@@ -1,5 +1,6 @@
-#include <ultra64.h>
+#include "basicheader.h"
 
+<<<<<<< HEAD:src/marioTest.c
 #include "sm64.h"
 #include "game/area.h"
 #include "game/level_update.h"
@@ -20,50 +21,42 @@ int hasPerformedGroundPoundJump = 0; // Global variable to track the jump
 
 
 s32 act_ground_pound_custom(struct MarioState *m) {
+=======
+u8 hasPerformedGroundPoundJump = 0;
+s32 cahstom_act_ground_pound(struct MarioState *m) {
+>>>>>>> dea4d5f (Finally fix everything):src/game/act_gp_custom.c
     u32 stepResult;
     f32 yOffset;
-    
 
-/********************************************************************************
-                    Super Mario 64 : Extra Moveset
 
-                      Ground Pound Action List
+    /********************************************************************************
+                        Super Mario 64 : Extra Moveset
 
-                 Copyright 2025 Caleb V. Productions
+                          Ground Pound Action List
 
-                This module was programmed by C.Vernon
+                     Copyright 2025 Caleb V. Productions
 
-                           12 - 14/01/2025
- ********************************************************************************/
+                    This module was programmed by C.Vernon
+
+                               12 - 14/01/2025
+     ********************************************************************************/
 
     if (m->input & INPUT_B_PRESSED) {
         // Ground pound dive 
         set_mario_action(m, ACT_DIVE, 0);
-        m->vel[1] = 30.0f; //[0] is X, [1] is Y,
-        // and [2] is Z
-        m->forwardVel = 55.0f; // This variable affects
-        // the X and Z velocity
+        m->vel[1] = 30.0f; 
+        m->forwardVel = 55.0f;
         m->faceAngle[1] = m->intendedYaw;
-        // faceAngle is a collection of 3 variables for Mario's rotation
-        // intendedYaw is basically where the analog stick is pointing
-        // relative to the camera
-        return FALSE; // This ends the function early, so
-        // that other numbers don't affect the dive
+        return FALSE;
     }
 
-        if ((m->input & INPUT_A_PRESSED) && hasPerformedGroundPoundJump == 0) {
-        // Ground pound jump
+    if ((m->input & INPUT_A_PRESSED) && hasPerformedGroundPoundJump == 0) {
+        // Ground Pound Jump (only once per ground touch)
         set_mario_action(m, ACT_TRIPLE_JUMP, 0);
         m->particleFlags |= PARTICLE_VERTICAL_STAR;
-
-        hasPerformedGroundPoundJump = 1; // Mark that the ground pound jump has been performed
-        return FALSE; // Ends the function early
+        hasPerformedGroundPoundJump = 1; // Prevents further jumps
+        return FALSE;
     }
-     /*******************************************************************************
-
-     *                                  End Moveset.
-
-     ********************************************************************************/
 
     play_sound_if_no_flag(m, SOUND_ACTION_THROW, MARIO_ACTION_SOUND_PLAYED);
 
@@ -88,7 +81,7 @@ s32 act_ground_pound_custom(struct MarioState *m) {
 
         m->actionTimer++;
         if (m->actionTimer >= m->marioObj->header.gfx.unk38.curAnim->unk08 + 4) {
-            play_sound(SOUND_MARIO_GROUND_POUND_WAH, m->marioObj->header.gfx.cameraToObject);
+            play_sound(0x24228081, m->marioObj->header.gfx.cameraToObject);
             m->actionState = 1;
         }
     } else {
@@ -96,15 +89,10 @@ s32 act_ground_pound_custom(struct MarioState *m) {
 
         stepResult = perform_air_step(m, 0);
         if (stepResult == AIR_STEP_LANDED) {
+            hasPerformedGroundPoundJump = 0; // Reset when Mario lands
+
             if (should_get_stuck_in_ground(m)) {
-#ifdef VERSION_SH
-                queue_rumble_data(5, 80);
-#endif
-#ifdef VERSION_JP
-                play_sound(SOUND_MARIO_OOOF, m->marioObj->header.gfx.cameraToObject);
-#else
                 play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
-#endif
                 m->particleFlags |= PARTICLE_MIST_CIRCLE;
                 set_mario_action(m, ACT_BUTT_STUCK_IN_GROUND, 0);
             } else {
@@ -128,5 +116,8 @@ s32 act_ground_pound_custom(struct MarioState *m) {
 
     return FALSE;
 }
+<<<<<<< HEAD:src/marioTest.c
 
 
+=======
+>>>>>>> dea4d5f (Finally fix everything):src/game/act_gp_custom.c
