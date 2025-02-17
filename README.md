@@ -15,8 +15,7 @@ This is an example setup for injecting compiled C code into Super Mario 64.
 
 ## Folder Format
 ```
-src/
-  marioTest.c ... Example ground pound dive code.
+src/ ............ Source files, some headers
 
 include/sm64 ...... Header (.h) files
 asm/............... Assembly files with addresses
