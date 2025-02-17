@@ -14,7 +14,7 @@ s32 cahstom_act_ground_pound(struct MarioState *m) {
 
                      Copyright 2025 Caleb V. Productions
 
-                    This module was programmed by C.Vernon
+            This module was programmed by C.Vernon and AmitabhTechz
 
                                12 - 14/01/2025
      ********************************************************************************/
