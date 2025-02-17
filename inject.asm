@@ -5,27 +5,9 @@
 .include "asm/sections.asm"
 .include "asm/adreso.asm"
 
-<<<<<<< HEAD
-
-.orga 0x120000
-.importobj "obj/marioTest.o"
-.importobj "obj/marioGPJ.o"
-
-
-.org 0x8026c9fc
-.area 0x8026cd0c-0x8026c9fc
-.importobj "obj/badCodeOne.o"
-.endarea
-
-.org 0x8026b6a0
-.area 0x8026b740-0x8026b6a0
-.importobj "obj/badCodeTwo.o"
-.endarea
-=======
 .headersize SEC_CUSTOM_HEADERSIZE
 .org SEC_CUSTOM_RAM
 .area SEC_CUSTOM_SIZE, 0
->>>>>>> dea4d5f (Finally fix everything)
 
 // import obj file
 .importobj "obj/game/act_gp_custom.o"
