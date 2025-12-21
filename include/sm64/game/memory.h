@@ -14,6 +14,18 @@ struct AllocOnlyPool
     u8 *freePtr;
 };
 
+struct DmaTable {
+    u32 count;
+    u8 *srcAddr;
+    struct OffsetSizePair anim[1]; // dynamic size
+};
+
+struct DmaHandlerList {
+    struct DmaTable *dmaTable;
+    void *currentAddr;
+    void *bufTarget;
+};
+
 struct MemoryPool;
 
 #ifndef INCLUDED_FROM_MEMORY_C

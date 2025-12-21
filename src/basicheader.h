@@ -14,6 +14,7 @@
 #include "game/obj_behaviors.h"
 #include "game/obj_behaviors_2.h"
 #include "game/object_helpers.h"
+#include "object_constants.h"
 #include "game/object_list_processor.h"
 #include "game/platform_displacement.h"
 #include "game/rendering_graph_node.h"
@@ -32,6 +33,9 @@
 #include "audio/external.h"
 #include "engine/graph_node.h"
 #include "game/game.h"
+#include "seq_ids.h"
+#include "game/ingame_menu.h"
+#include "game/memory.h"
 
 
 #define o gCurrentObject

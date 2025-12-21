@@ -666,6 +666,8 @@
     #define PIRANHA_PLANT_ACT_SHRINK_AND_DIE 6
     #define PIRANHA_PLANT_ACT_WAIT_TO_RESPAWN 7
     #define PIRANHA_PLANT_ACT_RESPAWN 8
+/* oPiranhaPlantSleepMusicState */
+    #define PIRANHA_PLANT_SLEEP_MUSIC_PLAYING 0
 
 /* Piranha Plant bubble */
     #define PIRANHA_PLANT_BUBBLE_ACT_IDLE 0

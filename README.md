@@ -6,12 +6,11 @@ This is an example setup for injecting compiled C code into Super Mario 64.
 
 # Dependencies
 
-### The following tools are required to build (for Windows at least):
+### The following tools are required to build (for NT and GNU/Linux at least):
 
-* n64chain
-* n64crc
-* armips
-* MSYS2 
+* GNU toolchain
+* n64crc in PATH
+* MSYS2 or any MingW64 subsystem for NT
 
 ## Folder Format
 ```

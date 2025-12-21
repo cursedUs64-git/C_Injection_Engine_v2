@@ -5,8 +5,15 @@
 // have an appropriate header.
 
 #include <ultra64.h>
+
 #include "macros.h"
 
+
+#ifdef AVOID_UB
+    #define BAD_RETURN(cmd) void
+#else
+    #define BAD_RETURN(cmd) cmd
+#endif
 struct Controller
 {
   /*0x00*/ s16 rawStickX;       //

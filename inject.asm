@@ -1,58 +1,68 @@
 .n64
-.open "rom_in.z64", "rom_out.z64", 0
-.include "asm/functions.asm"
-.include "asm/variables.asm"
+.open "baserom.us.z64", "patched.us.z64", 0
 .include "asm/sections.asm"
-.include "asm/adreso.asm"
+.include "asm/symbols.asm"
 
+// replace pre tiptoe with shoe floor
+.orga 0x576104
+.include "src/anims/cacapoo.asm"
+.orga 0x576200
+.include "src/anims/cacapoo2.asm"
+
+
+/******************** Custom injection ********************/
 .headersize SEC_CUSTOM_HEADERSIZE
-.org SEC_CUSTOM_RAM
-.area SEC_CUSTOM_SIZE, 0
+.orga SEC_CUSTOM_ROM
 
-// import obj file
-.importobj "obj/game/act_gp_custom.o"
-.align 4
-.importobj "obj/game/act_jump_custom.o"
+// this object file already has aligned functions thanks to an external linker (LD in this case)
+.importobj "tmp/injection_custom.o"
 .align 4
 
-.endarea // SEC_CUSTOM_SIZE
+.definelabel mario_patchable_table_TWO, org()
+.word @anim_d1_start, @anim_d1_size
+.align 4
+
+// Recommended to align functions evenly (normally 4 bytes) to make it console compatible and avoid runtime errors.
 
 /******************** Custom segment loader ********************/
 
 .headersize SEC_MAIN_HEADERSIZE
 
-.org 0x80248AD8
-    // overwrite useless branch in one of the bootup functions
-    jal __load_custom_segment
+// around 30-40 bytes of free space because of unused functions (3-4 functions?)
+.org 0x802ca370
+.importobj "obj/loads/cahstom_loads.o"
 
-.org 0x803396D8
-__load_custom_segment:
-    // Save return address
-    addiu sp, sp, -0x18
-    sw    ra, 0x14 (sp)
-
-    // dma_copy(SEC_CUSTOM_SIZE, SEC_CUSTOM_RAM, SEC_CUSTOM_ROM);
-    la    t0, SEC_CUSTOM_SIZE
-    la    a0, SEC_CUSTOM_RAM
-    la    a1, SEC_CUSTOM_ROM
-    
-    jal   dma_copy
-    addu  a2, a1, t0
-    nop
-
-    // Restore return address and return
-    lw    ra, 0x14 (sp)
-    jr    ra
-    addiu sp, sp, 0x18
+// while setting up the game memory, go to the cahstom_loads function to perform other DMA copies from ROM to RAM. Hook basically.
+/* setup_game_memory - thread5_game_loop */
+.org 0x80248964
+.area 0x80248af0 - 0x80248964, 0
+.importobj "obj/hooks/setup_game_memory.o"
+.endarea
 
 /******************** Function Replacement ********************/
 
 .headersize SEC_MAIN_HEADERSIZE
 
-.org 0x8026C9FC // Overwrite original function call
-.importobj "obj/game/act_gp_hook.o"
+/* for extra animations */
+.org 0x802509EC // set_mario_animation
+JAL     mario_anim_load_patchable_table
+.org 0x80250B3C // set_mario_anim_with_accel
+JAL     mario_anim_load_patchable_table
 
-.org 0x8026B6A0
-.importobj "obj/game/act_jump_hook.o"
+
+// replace aanimation with cahstom animation in cahstom patchable table (windemoAold)
+/* act_star_dance - act_star_dance_water */
+.org 0x80258420
+.area 0x802584dc - 0x80258420, 0
+.importobj "obj/hooks/act_star_dance.o"
+.endarea
+
+.headersize 0-orga() // the pointers are relative to the start of the animation
+.definelabel @anim_d1_start, orga()
+.importobj "obj/anims/windemoAold.o"
+.definelabel @anim_d1_size, orga()-@anim_d1_start
+
+
+
 
 .close

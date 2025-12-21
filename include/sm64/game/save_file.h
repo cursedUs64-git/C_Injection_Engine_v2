@@ -67,9 +67,11 @@ struct MainMenuSaveData
 struct SaveBuffer
 {
     // Each of the four save files has two copies. If one is bad, the other is used as a backup.
-    struct SaveFile files[NUM_SAVE_FILES][2];
+    struct SaveFile files[NUM_SAVE_FILES];
+    struct SaveFile file_backups[NUM_SAVE_FILES / 2];
     // The main menu data has two copies. If one is bad, the other is used as a backup.
-    struct MainMenuSaveData menuData[2];
+    struct MainMenuSaveData menuData;
+    u8 _pad[144];
 };
 
 struct WarpNode;
