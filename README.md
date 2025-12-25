@@ -1,4 +1,4 @@
-# Super Mario 64 C Injection Engine V2
+# Super Mario 64 C Injection Engine v2
 
 Super Mario 64 C Injection Engine by RealGrude, SuperMarioXerox13 and CalebV64.
 
@@ -8,9 +8,9 @@ This is an example setup for injecting compiled C code into Super Mario 64.
 
 ### The following tools are required to build (for NT and GNU/Linux at least):
 
-* GNU toolchain
-* n64crc in PATH
-* MSYS2 or any MingW64 subsystem for NT
+* GNU toolchain, mips toolchain (check Makefile for variants of targets)
+* MSYS2 or any MingW64 subsystem (for NT)
+* Python >= 3
 
 ## Folder Format
 ```

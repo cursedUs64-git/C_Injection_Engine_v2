@@ -9,30 +9,53 @@ include util.mk
 # ----------------------------
 SRC_ROOT_DIR    := src
 OBJ_ROOT_DIR    := obj
-OBJ_CUSTOM_DIR  := obj/custom
+OBJ_CUSTOM_DIR  := $(OBJ_ROOT_DIR)/custom
 TMP_DIR         := tmp
 TOOLS_DIR       := tools
 SM64TOOLS_DIR   := $(TOOLS_DIR)/sm64tools
 RECOMP_CC_DIR   := $(TOOLS_DIR)/ido-static-recomp
 LD_SCRIPT       := ld/link.ld
 
-MINIFIND        := $(TOOLS_DIR)/minifind
-GEN_ARMIPS_SYMS := $(TOOLS_DIR)/gen_armips_syms
-CC              := $(RECOMP_CC_DIR)/build/out/cc
-CC_CHECK        := gcc
-LD              := mips64-elf-ld
-AS              := mips64-elf-as
-OBJDUMP         := mips64-elf-objdump
-OBJCOPY         := mips64-elf-objcopy
+# disable this if u wanna debug
+MAKEFLAGS += --no-print-directory
+
+
+# detect prefix for MIPS toolchain
+ifneq      ($(call find-command,mips-linux-gnu-ld),)
+  CROSS := mips-linux-gnu-
+else ifneq ($(call find-command,mips-unknown-linux-gnu-ld),)
+  CROSS := mips-unknown-linux-gnu-
+else ifneq ($(call find-command,mips64-linux-gnu-ld),)
+  CROSS := mips64-linux-gnu-
+else ifneq ($(call find-command,mips64-unknown-linux-gnu-ld),)
+  CROSS := mips64-unknown-linux-gnu-
+else ifneq ($(call find-command,mips-elf-ld),)
+  CROSS := mips-elf-
+else ifneq ($(call find-command,mips-none-elf-ld),)
+  CROSS := mips-none-elf-
+else ifneq ($(call find-command,mips64-elf-ld),)
+  CROSS := mips64-elf-
+else ifneq ($(call find-command,mips64-none-elf-ld),)
+  CROSS := mips64-none-elf-
+else
+  $(error Unable to detect a suitable MIPS toolchain installed)
+endif
+
+CC              := gcc
+CROSS_CC        := $(RECOMP_CC_DIR)/build/out/cc
+CROSS_LD        := $(CROSS)ld
+CROSS_AS        := $(CROSS)as
+CROSS_OBJDUMP   := $(CROSS)objdump
+CROSS_OBJCOPY   := $(CROSS)objcopy
 ARMIPS          := $(TOOLS_DIR)/armips # not using system-wide armips anymore cus uh no
 N64CKSUM        := $(SM64TOOLS_DIR)/n64cksum
+PYTHON := python3 # assuming python is python3 in the host xd change it by urself dumdum (python >=3 is necessary btw)
+MINIFIND        := $(PYTHON) $(TOOLS_DIR)/util/minifind.py
+GEN_ARMIPS_SYMS := $(PYTHON) $(TOOLS_DIR)/util/gen_armips_syms.py
 
 ROM_IN          := baserom.us.z64
 ROM_OUT         := patched.us.z64
 
-INJECT_OBJ      := $(TMP_DIR)/injection_custom.o
-INJECT_BIN      := $(TMP_DIR)/injection_custom.bin
-CUSTOM_MAP      := $(TMP_DIR)/injection_custom.map
 SYMBOLS_INC     := $(TMP_DIR)/inject_symbols.inc.asm
 
 # ----------------------------
@@ -46,11 +69,16 @@ INCLUDE_FLAGS := -Iinclude -Iinclude/sm64 -Iinclude/sm64/libc $(foreach d,$(HEAD
 
 CUSTOM_C_SRCS   := $(shell $(MINIFIND) $(SRC_ROOT_DIR) -type f -name "*.c" 2>/dev/null)
 CUSTOM_ASM_SRCS := $(shell $(MINIFIND) $(SRC_ROOT_DIR) -type f \( -name "*.s" -o -name "*.S" -o -name "*.asm" \) 2>/dev/null)
+ASM_S_SRCS   := $(filter %.s,$(CUSTOM_ASM_SRCS))
+ASM_S_CAP_SRCS := $(filter %.S,$(CUSTOM_ASM_SRCS))
+ASM_ASM_SRCS := $(filter %.asm,$(CUSTOM_ASM_SRCS))
 
-CUSTOM_OBJS := $(patsubst $(SRC_ROOT_DIR)/%.c,$(OBJ_ROOT_DIR)/%.o,$(CUSTOM_C_SRCS)) \
-               $(patsubst $(SRC_ROOT_DIR)/%.s,$(OBJ_ROOT_DIR)/%.o,$(CUSTOM_ASM_SRCS)) \
-               $(patsubst $(SRC_ROOT_DIR)/%.S,$(OBJ_ROOT_DIR)/%.o,$(CUSTOM_ASM_SRCS)) \
-               $(patsubst $(SRC_ROOT_DIR)/%.asm,$(OBJ_ROOT_DIR)/%.o,$(CUSTOM_ASM_SRCS))
+CUSTOM_OBJS := \
+  $(patsubst $(SRC_ROOT_DIR)/%.c,$(OBJ_ROOT_DIR)/%.o,$(CUSTOM_C_SRCS)) \
+  $(patsubst $(SRC_ROOT_DIR)/%.s,$(OBJ_ROOT_DIR)/%.o,$(ASM_S_SRCS)) \
+  $(patsubst $(SRC_ROOT_DIR)/%.S,$(OBJ_ROOT_DIR)/%.o,$(ASM_S_CAP_SRCS)) \
+  $(patsubst $(SRC_ROOT_DIR)/%.asm,$(OBJ_ROOT_DIR)/%.o,$(ASM_ASM_SRCS))
+
 
 OBJ_DIRS := $(sort $(dir $(CUSTOM_OBJS)))
 
@@ -71,14 +99,20 @@ INC_C_SRCS := $(patsubst %.png,%.inc.c,$(PNG_SRCS))
 # ----------------------------
 # Flags
 # ----------------------------
-CFLAGS := $(INCLUDE_FLAGS) -O2 -G0 -Wo,-loopunroll,0 -non_shared -Wab,-r4300_mul -Xcpluscomm -Xfullwarn -signed -32 -nostdinc -DTARGET_N64 -D_LANGUAGE_C -mips2 
+CFLAGS := $(INCLUDE_FLAGS) -O2 -G0 -Wo,-loopunroll,0 -non_shared -Wab,-r4300_mul -Xcpluscomm -signed -32 -nostdinc -DTARGET_N64 -D_LANGUAGE_C -mips2 -w 
 ASFLAGS := -march=vr4300 -mabi=32
-CC_CHECK_CFLAGS := -fsyntax-only -fsigned-char -std=gnu90 -Wall -Wextra -Wno-format-security -Wno-main -DNON_MATCHING -DAVOID_UB $(INCLUDE_FLAGS)
+CC_CHECK_CFLAGS := -fsyntax-only \
+-fsigned-char \
+-std=gnu90 \
+-DNON_MATCHING \
+-DAVOID_UB \
+-w $(INCLUDE_FLAGS)
+# remove -w for debugging pls sorry for the inconvenience
 
 # ----------------------------
 # Phony targets
 # ----------------------------
-.PHONY: all build tools obj_dirs inject print_map gen_symbols clean distclean info
+.PHONY: all build tools obj_dirs inject print_map gen_symbols clean distclean info default
 
 # ----------------------------
 # Default target
@@ -98,7 +132,7 @@ info:
 # ----------------------------
 # Build target
 # ----------------------------
-build: tools info obj_dirs $(INC_C_SRCS) $(CUSTOM_OBJS) $(INJECT_OBJ)
+build: tools info obj_dirs $(CUSTOM_OBJS) $(INJECT_ELF)
 	@rm -f a.out
 	@echo "Build finished successfully."
 
@@ -107,70 +141,73 @@ build: tools info obj_dirs $(INC_C_SRCS) $(CUSTOM_OBJS) $(INJECT_OBJ)
 # ----------------------------
 tools:
 	@echo "Building tools..."
-	@$(MAKE) -C $(TOOLS_DIR) all
-	@$(MAKE) -C $(SM64TOOLS_DIR)
-
-$(MINIFIND): $(TOOLS_DIR)/util/minifind.c
-	@mkdir -p $(dir $(MINIFIND))
-	@gcc -o $(MINIFIND) $(TOOLS_DIR)/util/minifind.c
-
-$(GEN_ARMIPS_SYMS): $(TOOLS_DIR)/util/gen_armips_syms.c # thisa tool is unused for now, intended for generating asm files from MAP files from decomp. dma_read to be non-static
-	@mkdir -p $(dir $(MINIFIND))
-	@gcc -o $(MINIFIND) $(TOOLS_DIR)/util/gen_armips_syms.c
+	@$(MAKE) -C $(TOOLS_DIR) all > /dev/null
+	@$(MAKE) -C $(SM64TOOLS_DIR) > /dev/null
 
 # ----------------------------
 # Ensure directories exist
 # ----------------------------
 obj_dirs:
 	@echo "Creating object directories..."
-	@for d in $(OBJ_DIRS) $(TMP_DIR); do mkdir -p $$d; done
+	@for f in $(CUSTOM_OBJS); do \
+	  mkdir -p $$(dirname $$f); \
+	done
+	@mkdir -p $(TMP_DIR)
 
 # ----------------------------
 # Compile C files
 # ----------------------------
+
+# .inc.c files aren't compiled because they are included by another C file
 $(OBJ_ROOT_DIR)/%.o: $(SRC_ROOT_DIR)/%.c | obj_dirs tools
-	@echo "CC $< -> $@"
-	@$(CC_CHECK) $(CC_CHECK_CFLAGS) -MMD -MP -MT $@ -MF $(OBJ_ROOT_DIR)/$*.d $< -o /dev/null
-	# @rm -f a.out
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@if echo "$<" | grep -q ".inc.c$$"; then \
+		echo "Skipping compilation of included file: $<"; \
+	else \
+		echo "CC $< -> $@"; \
+		$(CC) $(CC_CHECK_CFLAGS) -MMD -MP -MT $@ -MF $(OBJ_ROOT_DIR)/$*.d $< -c -o $@; \
+	fi
 
 # ----------------------------
 # Assemble ASM files
 # ----------------------------
 $(OBJ_ROOT_DIR)/%.o: $(SRC_ROOT_DIR)/%.s | obj_dirs
 	@echo "AS $< -> $@"
-	@$(AS) $(ASFLAGS) $< -o $@
+	@$(CROSS_AS) $(ASFLAGS) $< -o $@
 
 $(OBJ_ROOT_DIR)/%.o: $(SRC_ROOT_DIR)/%.S | obj_dirs
 	@echo "AS $< -> $@"
-	@$(AS) $(ASFLAGS) $< -o $@
+	@$(CROSS_AS) $(ASFLAGS) $< -o $@
 
 $(OBJ_ROOT_DIR)/%.o: $(SRC_ROOT_DIR)/%.asm | obj_dirs
 	@echo "AS $< -> $@"
-	@$(AS) $(ASFLAGS) $< -o $@
+	@$(CROSS_AS) $(ASFLAGS) $< -o $@
 
 # ----------------------------
 # Link only obj/custom objects dynamically
 # ----------------------------
+INJECT_OBJ := $(TMP_DIR)/injection_custom.o
+INJECT_ELF := $(TMP_DIR)/injection_custom.elf
+CUSTOM_MAP := $(TMP_DIR)/injection_custom.map
+
+# 1️⃣ Relocatable object (for symbols / armips)
 $(INJECT_OBJ):
 	@CUSTOM_LINK_OBJS=`$(MINIFIND) $(OBJ_CUSTOM_DIR) -type f -name "*.o" 2>/dev/null`; \
 	if [ -z "$$CUSTOM_LINK_OBJS" ]; then \
-		echo "No obj/custom/*.o files found, skipping injection object generation."; \
+		echo "No obj/custom/*.o files found, skipping injection."; \
 	else \
-		echo "Linking obj/custom/*.o -> $@"; \
+		echo "Linking relocatable object -> $@"; \
 		mkdir -p $(dir $@); \
-		$(LD) -r -T $(LD_SCRIPT) -o $@ $$CUSTOM_LINK_OBJS; \
-		for s in `$(OBJDUMP) -h $@ | awk '/\\.gptab|\\.ctors|\\.drectve|\\.init|\\.fini|\\.MIPS/ {print $$2}'`; do \
-			$(OBJCOPY) --remove-section=$$s $@ $@.tmp && mv $@.tmp $@; \
+		$(CROSS_LD) -r -T $(LD_SCRIPT) -o $@ $$CUSTOM_LINK_OBJS; \
+		for s in `$(CROSS_OBJDUMP) -h $@ | awk '/\\.gptab|\\.ctors|\\.drectve|\\.init|\\.fini|\\.MIPS/ {print $$2}'`; do \
+			$(CROSS_OBJCOPY) --remove-section=$$s $@ $@.tmp && mv $@.tmp $@; \
 		done || true; \
-		echo "Generating symbols from $(INJECT_OBJ)" \
-		$(LD) -r -Map $(CUSTOM_MAP) -T $(LD_SCRIPT) $(INJECT_OBJ) >/dev/null 2>&1 || true \
-		echo "Symbol map updated: $(CUSTOM_MAP)" \
-		echo "Linking to binary using $(LD_SCRIPT)"; \
-		$(LD) -Map $(CUSTOM_MAP) -T $(LD_SCRIPT) --oformat binary -o $@ $(INJECT_OBJ); \
-		echo "Map written to $(CUSTOM_MAP)"; \
-		rm -f a.out; \
 	fi
+
+# 2️⃣ Linked ELF (full executable format)
+$(INJECT_ELF): $(INJECT_OBJ)
+	@echo "Linking full ELF -> $@"
+	@mkdir -p $(dir $@)
+	@$(CROSS_LD) -r -Map $(CUSTOM_MAP) -T $(LD_SCRIPT) -o $@ $(INJECT_OBJ)
 
 # ----------------------------
 # Inject into ROM
@@ -203,5 +240,5 @@ distclean: clean
 # ----------------------------
 # Include dependencies
 # ----------------------------
--include $(CUSTOM_OBJS:.o=.d)
+-include $(CUSTOM_OBJS:=.d)
 

@@ -1,16 +1,20 @@
 #include "basicheader.h"
 
-extern u16 gZBuffer[SCREEN_WIDTH * SCREEN_HEIGHT];
-extern u16 gFramebuffer0[SCREEN_WIDTH * SCREEN_HEIGHT];
-extern u16 gFramebuffer1[SCREEN_WIDTH * SCREEN_HEIGHT];
-extern u16 gFramebuffer2[SCREEN_WIDTH * SCREEN_HEIGHT];
-
 #define _entrySegmentRomStart 0x00108a10
 #define _entrySegmentRomEnd 0x00108a40
 #define _segment2_mio0SegmentRomStart 0x00800000 // Might aswell change load_segment_decompress to be load_segment so people don't get confused?
-#define _segment2_mio0SegmentRomEnd 0x0081bb64 // align bruh :angry: it was 81bb63 before. Real hardwaros!
+#define _segment2_mio0SegmentRomEnd 0x0081bb64 // align bruh :angry: it was 81bb63 before. Real hardwaros moment
 #define _segment2_SegmentRomStart 0x00803156
 #define _segment2_SegmentRomEnd _segment2_mio0SegmentRomEnd
+
+extern u16 gZBuffer[];
+extern u16 gFramebuffer0[];
+extern u16 gFramebuffer1[];
+extern u16 gFramebuffer2[];
+
+extern cahstom_loads(); // i love silencing errors
+void dma_read(u8 *dest, u8 *srcStart, u8 *srcEnd); // silence errors 2
+void setup_dma_table_list(struct DmaHandlerList *list, void *srcAddr, void *buffer); // silence errors 3
 
 void setup_game_memory(void) {
     // UNUSED u8 filler[8];

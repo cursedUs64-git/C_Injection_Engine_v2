@@ -9,7 +9,6 @@
 .orga 0x576200
 .include "src/anims/cacapoo2.asm"
 
-
 /******************** Custom injection ********************/
 .headersize SEC_CUSTOM_HEADERSIZE
 .orga SEC_CUSTOM_ROM
@@ -28,8 +27,9 @@
 
 .headersize SEC_MAIN_HEADERSIZE
 
-// around 30-40 bytes of free space because of unused functions (3-4 functions?)
+// 40 bytes of free space because of unused functions (4 functions)
 .org 0x802ca370
+.area 0x802ca3b0 - 0x802ca370, 0
 .importobj "obj/loads/cahstom_loads.o"
 
 // while setting up the game memory, go to the cahstom_loads function to perform other DMA copies from ROM to RAM. Hook basically.
@@ -61,8 +61,5 @@ JAL     mario_anim_load_patchable_table
 .definelabel @anim_d1_start, orga()
 .importobj "obj/anims/windemoAold.o"
 .definelabel @anim_d1_size, orga()-@anim_d1_start
-
-
-
 
 .close

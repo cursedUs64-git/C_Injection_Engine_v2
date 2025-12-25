@@ -8,6 +8,8 @@
 #define SEC_CUSTOM_HEADERSIZE (SEC_CUSTOM_RAM - SEC_CUSTOM_ROM)
 #define SEC_CUSTOM_SIZE 0x00006000
 
+void dma_read(u8 *dest, u8 *srcStart, u8 *srcEnd);
+
 void cahstom_loads(void) {
     dma_read(SEC_CUSTOM_RAM, SEC_CUSTOM_ROM, SEC_CUSTOM_ROM + SEC_CUSTOM_SIZE /* srcEnd */);
 }
