@@ -61,14 +61,14 @@ SYMBOLS_INC     := $(TMP_DIR)/inject_symbols.inc.asm
 # ----------------------------
 # Auto-discover headers and sources
 # ----------------------------
-HEADER_DIRS := $(shell $(MINIFIND) $(SRC_ROOT_DIR) -type f -name "*.h" 2>/dev/null | xargs -r -n1 dirname | sort -u)
+HEADER_DIRS := $(shell $(MINIFIND) $(SRC_ROOT_DIR) -type f -name "*.h" | xargs -r -n1 dirname | sort -u)
 ifeq ($(strip $(HEADER_DIRS)),)
   HEADER_DIRS := $(SRC_ROOT_DIR)
 endif
 INCLUDE_FLAGS := -Iinclude -Iinclude/sm64 -Iinclude/sm64/libc $(foreach d,$(HEADER_DIRS),-I$(d))
 
-CUSTOM_C_SRCS   := $(shell $(MINIFIND) $(SRC_ROOT_DIR) -type f -name "*.c" 2>/dev/null)
-CUSTOM_ASM_SRCS := $(shell $(MINIFIND) $(SRC_ROOT_DIR) -type f \( -name "*.s" -o -name "*.S" -o -name "*.asm" \) 2>/dev/null)
+CUSTOM_C_SRCS := $(filter-out %.inc.c, $(shell $(MINIFIND) $(SRC_ROOT_DIR) -type f -name "*.c"))
+CUSTOM_ASM_SRCS := $(shell $(MINIFIND) $(SRC_ROOT_DIR) -type f \( -name "*.s" -o -name "*.S" -o -name "*.asm" \))
 ASM_S_SRCS   := $(filter %.s,$(CUSTOM_ASM_SRCS))
 ASM_S_CAP_SRCS := $(filter %.S,$(CUSTOM_ASM_SRCS))
 ASM_ASM_SRCS := $(filter %.asm,$(CUSTOM_ASM_SRCS))
@@ -88,7 +88,7 @@ OBJ_DIRS := $(sort $(dir $(CUSTOM_OBJS)))
 N64GRAPHICS := $(SM64TOOLS_DIR)/n64graphics
 
 # Find all PNG files under src/
-PNG_SRCS := $(shell $(MINIFIND) $(SRC_ROOT_DIR) -type f -name "*.png" 2>/dev/null)
+PNG_SRCS := $(shell $(MINIFIND) $(SRC_ROOT_DIR) -type f -name "*.png")
 INC_C_SRCS := $(patsubst %.png,%.inc.c,$(PNG_SRCS))
 
 # Conversion rule
@@ -158,14 +158,10 @@ obj_dirs:
 # Compile C files
 # ----------------------------
 
-# .inc.c files aren't compiled because they are included by another C file
 $(OBJ_ROOT_DIR)/%.o: $(SRC_ROOT_DIR)/%.c | obj_dirs tools
-	@if echo "$<" | grep -q ".inc.c$$"; then \
-		echo "Skipping compilation of included file: $<"; \
-	else \
-		echo "CC $< -> $@"; \
-		$(CC) $(CC_CHECK_CFLAGS) -MMD -MP -MT $@ -MF $(OBJ_ROOT_DIR)/$*.d $< -c -o $@; \
-	fi
+	@echo "CC $< -> $@"
+	$(CC) $(CC_CHECK_CFLAGS) -MMD -MP -MF $(OBJ_ROOT_DIR)/$*.d -c $< -o /dev/null
+	$(CROSS_CC) $(CFLAGS) -c $< -o $@
 
 # ----------------------------
 # Assemble ASM files
@@ -191,7 +187,7 @@ CUSTOM_MAP := $(TMP_DIR)/injection_custom.map
 
 # 1️⃣ Relocatable object (for symbols / armips)
 $(INJECT_OBJ):
-	@CUSTOM_LINK_OBJS=`$(MINIFIND) $(OBJ_CUSTOM_DIR) -type f -name "*.o" 2>/dev/null`; \
+	@CUSTOM_LINK_OBJS=`$(MINIFIND) $(OBJ_CUSTOM_DIR) -type f -name "*.o"`; \
 	if [ -z "$$CUSTOM_LINK_OBJS" ]; then \
 		echo "No obj/custom/*.o files found, skipping injection."; \
 	else \
