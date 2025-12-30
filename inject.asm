@@ -31,6 +31,7 @@
 .org 0x802ca370
 .area 0x802ca3b0 - 0x802ca370, 0
 .importobj "obj/loads/cahstom_loads.o"
+.endarea
 
 // while setting up the game memory, go to the cahstom_loads function to perform other DMA copies from ROM to RAM. Hook basically.
 /* setup_game_memory - thread5_game_loop */
