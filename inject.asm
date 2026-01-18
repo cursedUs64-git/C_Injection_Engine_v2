@@ -3,12 +3,6 @@
 .include "asm/sections.asm"
 .include "asm/symbols.asm"
 
-// replace pre tiptoe with shoe floor
-.orga 0x576104
-.include "src/anims/cacapoo.asm"
-.orga 0x576200
-.include "src/anims/cacapoo2.asm"
-
 /******************** Custom injection ********************/
 .headersize SEC_CUSTOM_HEADERSIZE
 .orga SEC_CUSTOM_ROM
