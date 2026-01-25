@@ -7,8 +7,7 @@
 .headersize SEC_CUSTOM_HEADERSIZE
 .orga SEC_CUSTOM_ROM
 
-// this object file already has aligned functions thanks to an external linker (LD in this case)
-.importobj "tmp/injection_custom.o"
+.importobj "obj/custom/maroo_animaso.o"
 .align 4
 
 .definelabel mario_patchable_table_TWO, org()
@@ -21,14 +20,15 @@
 
 .headersize SEC_MAIN_HEADERSIZE
 
-// 40 bytes of free space because of unused functions (4 functions)
+// 0x40 bytes of free space because of unused functions (4 functions)
+/* stub_debug_1 */
 .org 0x802ca370
 .area 0x802ca3b0 - 0x802ca370, 0
-.importobj "obj/loads/cahstom_loads.o"
+.importobj "obj/loads/cahstom_loads.o" // function here performs DMA read from the ROM and allocates space in RAM, copying from ROM to RAM
 .endarea
 
-// while setting up the game memory, go to the cahstom_loads function to perform other DMA copies from ROM to RAM. Hook basically.
-/* setup_game_memory - thread5_game_loop */
+// while setting up the game memory, go to the cahstom_loads function. Hook basically.
+/* setup_game_memory */
 .org 0x80248964
 .area 0x80248af0 - 0x80248964, 0
 .importobj "obj/hooks/setup_game_memory.o"
@@ -44,9 +44,8 @@ JAL     mario_anim_load_patchable_table
 .org 0x80250B3C // set_mario_anim_with_accel
 JAL     mario_anim_load_patchable_table
 
-
-// replace aanimation with cahstom animation in cahstom patchable table (windemoAold)
-/* act_star_dance - act_star_dance_water */
+// replace animation with cahstom animation in cahstom patchable table (windemoAold)
+/* act_star_dance */
 .org 0x80258420
 .area 0x802584dc - 0x80258420, 0
 .importobj "obj/hooks/act_star_dance.o"

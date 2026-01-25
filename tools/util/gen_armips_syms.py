@@ -198,13 +198,13 @@ def main():
                     curr = symbols[idx]
                     next_sym = symbols[idx + 1] if idx + 1 < len(symbols) else None
                     if next_sym:
-                        finject.write(f"/* {curr.name} - {next_sym.name} */\n")
+                        finject.write(f"/* {curr.name} */\n")
                         finject.write(f".org {curr.raw_addr}\n")
                         finject.write(f".area {next_sym.raw_addr} - {curr.raw_addr}\n")
                         finject.write(".importobj \"\"\n")
                         finject.write(".endarea\n\n")
                     else:
-                        finject.write(f"/* {curr.name} - ??? */\n")
+                        finject.write(f"/* {curr.name} */\n")
                         finject.write(f".org {curr.raw_addr}\n")
                         finject.write("/* .area ??? - {curr.raw_addr} */\n")
                         finject.write("/* .importobj \"\" */\n")
