@@ -6,7 +6,6 @@ tmp/*
 *.*.inc.c
 
 # Object files
-*.o
 *.obj
 *.elf
 
