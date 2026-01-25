@@ -3,7 +3,7 @@ main.out
 payload
 obj/*
 tmp/*
-*.inc.c
+*.*.inc.c
 
 # Object files
 *.o
