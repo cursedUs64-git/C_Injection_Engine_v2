@@ -8,18 +8,18 @@ This is an example setup for injecting compiled C code into Super Mario 64.
 
 ### The following tools are required to build (for NT and GNU/Linux at least):
 
-* GNU toolchain, mips toolchain (check Makefile for variants of targets)
+* GNU toolchain
 * MSYS2 or any MingW64 subsystem (for NT)
 * Python >= 3
 
 ## Folder Format
 ```
-src/ ............ Source files, some headers
+src/ .............. Source files, some headers
 
 include/sm64 ...... Header (.h) files
 asm/............... Assembly files with addresses
 
-inject.asm .......... linker tasks, bootstrap code, hook inserts
+inject.asm ........ Linker tasks, bootstrap code, hook inserts
 
-obj/ ................. Object (.o) files
+obj/ .............. Object (.o) files
 ```
