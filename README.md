@@ -1,6 +1,6 @@
 # Super Mario 64 C Injection Engine v2
 
-Super Mario 64 C Injection Engine by RealGrude, SuperMarioXerox13 and CalebV64.
+Super Mario 64 C Injection Engine v2 by RealGrude, SuperMarioXerox13 and CalebV64.
 
 This is an example setup for injecting compiled C code into Super Mario 64.
 
@@ -12,7 +12,7 @@ This is an example setup for injecting compiled C code into Super Mario 64.
 * MSYS2 or any MingW64 subsystem (for NT)
 * Python >= 3
 
-## Folder Format
+# Folder Format
 ```
 src/ .............. Source files, some headers
 
@@ -23,3 +23,7 @@ inject.asm ........ Linker tasks, bootstrap code, hook inserts
 
 obj/ .............. Object (.o) files
 ```
+
+# Licensing
+
+Super Mario 64 C Injection Engine v2 is released under the Zero Clause BSD license. See the file LICENSE for more details.
